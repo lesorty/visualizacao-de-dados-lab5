@@ -46,7 +46,7 @@
     // Dados originais
     var anos = ['2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'];
     // Valores da variação (ex: variação de chuva anual)
-    var variacoes = [280, 404.6, 386.7, 295, 211.5, 764.8, 497.9, 591.3, 388.5, 938.6, 376.6];
+    var variacoes = [124.6, -17.9, -91.7, -83.5, 553.3, -266.9, 93.4, -202.8, 550.1, -562.0];
     
     // Inicialização do gráfico
     var dom = document.getElementById('container');
@@ -58,7 +58,7 @@
     // Configuração inicial do gráfico
     var option = {
       title: {
-        text: 'Volume de chuva acumulada na Fazenda Carnaúba por ano em um período de 10 anos (2014 a 2023)',
+        text: 'Variação da chuva acumulada na Fazenda Carnaúba em relação ao ano anterior (entre 2014 e 2023)',
         left: 'center',
         top: 20
       },
@@ -93,7 +93,7 @@
           data: variacoes,
           type: 'bar',
           itemStyle: {
-            borderRadius: [5, 5, 0, 0],
+            borderRadius: [5, 5, 5, 5],
             color: '#33e173', // Cor padrão
             emphasis: {
               color: '#26b159' // Cor ao passar o mouse (hover)
