@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+  <title>Visualização com Filtro</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    #filter {
+      padding: 10px;
+      background-color: #333;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    #container {
+      height: calc(100% - 50px);
+    }
+    label {
+      margin-right: 10px;
+    }
+    input {
+      width: 80px;
+    }
+  </style>
+</head>
+<body style="height: 100%">
+  <!-- Seção de Filtro -->
+  <div id="filter">
+    <label>Variação Mínima: 
+      <input type="number" id="minFilter" placeholder="mínimo">
+    </label>
+    <label>Variação Máxima: 
+      <input type="number" id="maxFilter" placeholder="máximo">
+    </label>
+    <button onclick="applyFilter()">Aplicar Filtro</button>
+  </div>
+  
+  <!-- Container do Gráfico -->
+  <div id="container"></div>
+  
+  <!-- Inclusão do ECharts -->
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  
+  <script type="text/javascript">
+    // Dados originais
+    var anos = ['2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'];
+    // Valores da variação (ex: variação de chuva anual)
+    var variacoes = [280, 404.6, 386.7, 295, 211.5, 764.8, 497.9, 591.3, 388.5, 938.6, 376.6];
+    
+    // Inicialização do gráfico
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, 'dark', {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    
+    // Configuração inicial do gráfico
+    var option = {
+      title: {
+        text: 'Volume de chuva acumulada na Fazenda Carnaúba por ano em um período de 10 anos (2014 a 2023)',
+        left: 'center',
+        top: 20
+      },
+      tooltip: {
+        trigger: 'item', // Mostra tooltip ao passar o mouse sobre uma barra
+        formatter: '{c}' // Exibe o ano e o valor da variação
+      },
+      xAxis: {
+        type: 'category',
+        data: anos
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: '{value} mm'
+        }
+      },
+      dataZoom: [
+        {
+          type: 'slider',  // Slider para zoom
+          start: 0,
+          end: 100
+        },
+        {
+          type: 'inside',  // Zoom com mouse/touch
+          start: 0,
+          end: 100
+        }
+      ],
+      series: [
+        {
+          data: variacoes,
+          type: 'bar',
+          itemStyle: {
+            borderRadius: [5, 5, 0, 0],
+            color: '#33e173', // Cor padrão
+            emphasis: {
+              color: '#26b159' // Cor ao passar o mouse (hover)
+            }
+          }
+        }
+      ]
+    };
+
+    // Renderiza o gráfico com a opção definida
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+    
+    window.addEventListener('resize', myChart.resize);
+    
+    // Função para aplicar o filtro
+    function applyFilter() {
+      // Obtém os valores dos campos de filtro (se não preenchidos, considera limites amplos)
+      var minVal = parseFloat(document.getElementById('minFilter').value);
+      var maxVal = parseFloat(document.getElementById('maxFilter').value);
+      if (isNaN(minVal)) minVal = -Infinity;
+      if (isNaN(maxVal)) maxVal = Infinity;
+      
+      // Filtra os dados com base nos valores informados
+      var anosFiltrados = [];
+      var variacoesFiltradas = [];
+      for (var i = 0; i < anos.length; i++) {
+        if (variacoes[i] >= minVal && variacoes[i] <= maxVal) {
+          anosFiltrados.push(anos[i]);
+          variacoesFiltradas.push(variacoes[i]);
+        }
+      }
+      
+      // Atualiza o gráfico com os dados filtrados
+      myChart.setOption({
+        xAxis: {
+          data: anosFiltrados
+        },
+        series: [
+          {
+            data: variacoesFiltradas
+          }
+        ]
+      });
+    }
+  </script>
+</body>
+</html>
